@@ -11,7 +11,7 @@ namespace UniLMS.Application.Mappings
     {
         public SpecialityMappingProfile()
         {
-            CreateMap<Speciality, GetSpecialtiyDTO>()
+            CreateMap<Speciality, GetSpecialityDTO>()
                 .ForMember(dest => dest.FacultyName, opt => opt.MapFrom(src => src.Faculty != null ? src.Faculty.Name : null))
                 .ForMember(dest => dest.CafedraName, opt => opt.MapFrom(src => src.Cafedra != null ? src.Cafedra.Name : null));
 

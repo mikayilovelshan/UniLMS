@@ -6,7 +6,7 @@ using UniLMS.Domain.Enums;
 
 namespace UniLMS.Application.DTOs.Specialities
 {
-    public class GetSpecialtiyDTO
+    public class GetSpecialityDTO
     {
         public Guid Id { get; set; }
 

@@ -34,7 +34,7 @@ namespace UniLMS.Persistence.Services
             var cafedras = await _cafedraRead.GetAll(tracking: false)
                 .Include(f => f.Faculty)
                 .ToListAsync();
-            var dtos = _mapper.Map < List < GetCafedraDTO >> (cafedras);
+            var dtos = _mapper.Map < List <GetCafedraDTO>> (cafedras);
 
             return new SuccessDataResult<List<GetCafedraDTO>>(dtos);
         }
@@ -56,7 +56,7 @@ namespace UniLMS.Persistence.Services
         {
             bool isRemoved = await _cafedraWrite.HardDeleteAsync(id);
             if (!isRemoved)
-                return new ErrorResult("Uyğun fakültə mövcud deyil");
+                return new ErrorResult("Uyğun kafedra mövcud deyil");
             await _cafedraWrite.SaveAsync();
             return new SuccessResult("Kaferda uğurla silindi");
         }

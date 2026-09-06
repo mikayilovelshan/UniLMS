@@ -1,61 +1,168 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using UniLMS.Application.DTOs.Cafedras;
+using UniLMS.Application.DTOs.Specialities;
 using UniLMS.Application.Interfaces.Services;
+using UniLMS.Application.Repositories.CourseRepository;
 using UniLMS.Application.Repositories.SpecialityRepository;
 using UniLMS.Application.Utilities.Results;
+using UniLMS.Domain.Entities;
 
 namespace UniLMS.Persistence.Services
 {
     public class SpecialityService(ISpecialityReadRepository _specialityRead,
-        ISpecialityWriteRepository specialityWrite,
+        ISpecialityWriteRepository _specialityWrite,
+        ICourseReadRepository _courseRead,
         IMapper _mapper) : ISpecialityService
     {
-        public Task<IResult> CreateAsync(CreateCafedraDTO model)
+        public async Task<IResult> CreateAsync(CreateSpecialityDTO model)
         {
-            throw new NotImplementedException();
+            bool codeExists = await _specialityRead.GetWhere(s => s.Code == model.Code, tracking: false)
+                .AnyAsync();
+            if (codeExists)
+                return new ErrorResult($"{model.Code} kodlu ixtisas mövcuddur");
+
+            var speciality = _mapper.Map<Speciality>(model);
+
+            if(model.CourseIds != null && model.CourseIds.Any())
+            {
+                var courses = await _courseRead.GetWhere(x => model.CourseIds.Contains(x.Id), tracking: true)
+                    .ToListAsync();
+
+                speciality.Courses = courses;
+            }
+
+            await _specialityWrite.AddAsync(speciality);
+            await _specialityWrite.SaveAsync();
+
+            return new SuccessResult("İxtisas əlavə edildi");
         }
 
-        public Task<IDataResult<List<GetCafedraDTO>>> GetAllAsync()
+        public async Task<IDataResult<List<GetSpecialityDTO>>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var specialites = await _specialityRead
+                .GetAll(tracking: false)
+                .Include(s => s.Faculty)
+                .Include(s => s.Cafedra)
+                .Include(s => s.Courses)
+                .ToListAsync();
+
+            var dtos = _mapper.Map<List<GetSpecialityDTO>>(specialites);
+
+            return new SuccessDataResult<List<GetSpecialityDTO>>(dtos);
         }
 
-        public Task<IDataResult<GetCafedraDTO>> GetByIdAsync(Guid id)
+        public async Task<IDataResult<GetSpecialityDTO>> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var speciality = await _specialityRead
+                .GetWhere(s => s.Id == id, tracking: false)
+                .Include(s => s.Faculty)
+                .Include(s => s.Cafedra)
+                .Include(s => s.Courses)
+                .FirstOrDefaultAsync();
+
+            if(speciality == null)
+                return new ErrorDataResult<GetSpecialityDTO>("İxtisas tapılmadı.");
+
+            var dto = _mapper.Map<GetSpecialityDTO>(speciality);
+
+            return new SuccessDataResult<GetSpecialityDTO>(dto);
+
         }
 
-        public Task<IResult> HardDeleteAsync(Guid id)
+        public async Task<IResult> HardDeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            bool isRemoved = await _specialityWrite.HardDeleteAsync(id);
+
+            if (!isRemoved)
+                return new ErrorResult("Uyğun ixtisas mövcud deyil");
+
+            await _specialityWrite.SaveAsync();
+
+            return new SuccessResult("İxtisas bazadan tamamilə silindi.");
+
         }
 
-        public Task<IResult> HardDeleteRangeAsync(List<Guid> ids)
+        public async Task<IResult> HardDeleteRangeAsync(List<Guid> ids)
         {
-            throw new NotImplementedException();
+            var specialities = await _specialityRead
+                .GetWhere(s => ids.Contains(s.Id),tracking: true)
+                .ToListAsync();
+
+            if(specialities == null)
+                return new ErrorResult("Silmək üçün heç bir ixtisas tapılmadı");
+
+            _specialityWrite.HardDeleteRange(specialities);
+
+            await _specialityWrite.SaveAsync();
+
+            return new SuccessResult("Seçilmiş ixtisaslar bazadan tamamilə silindi.");
         }
 
-        public Task<IResult> RestoreAsync(Guid id)
+    
+
+        public async Task<IResult> SoftDeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            bool isRemoved = await _specialityWrite.SoftDeleteAsync(id);
+            if (!isRemoved)
+                return new ErrorResult("Uyğun kafedra tapılmadı");
+
+            await _specialityWrite.SaveAsync();
+            return new SuccessResult("Kafedra müvəqqəti silindi");
         }
 
-        public Task<IResult> SoftDeleteAsync(Guid id)
+        public async Task<IResult> SoftDeleteRangeAsync(List<Guid> ids)
         {
-            throw new NotImplementedException();
+            var cafedras = await _specialityRead.GetWhere(d => ids.Contains(d.Id), tracking: true).ToListAsync();
+            if (cafedras == null)
+                return new ErrorResult("Silmək üçün heç bir kafedra tapılmadı");
+            _specialityWrite.SoftDeleteRange(cafedras);
+            await _specialityWrite.SaveAsync();
+            return new SuccessResult("Kafedralar tamamilə silindi");
         }
 
-        public Task<IResult> SoftDeleteRangeAsync(List<Guid> ids)
+        public async Task<IResult> RestoreAsync(Guid id)
         {
-            throw new NotImplementedException();
+            bool isRestored = await _specialityWrite.RestoreAsync(id);
+            if (isRestored == false)
+                return new ErrorResult("Silinmiş məlumat tapılmadı və ya aktivdir");
+            await _specialityWrite.SaveAsync();
+            return new SuccessResult("Məlumat bərpa edildi");
         }
 
-        public Task<IResult> UpdateAsync(UpdateCafedraDTO model)
+        public async Task<IResult> UpdateAsync(UpdateSpecialityDTO model)
         {
-            throw new NotImplementedException();
+            var speciality = await _specialityRead.GetWhere(s => s.Id == model.Id, tracking: true)
+                .Include(s => s.Courses)
+                .FirstOrDefaultAsync(); 
+
+            if (speciality == null)
+                return new ErrorResult("Uyğun ixtisas mövcud deyil");
+
+            bool codeExists = await _specialityRead
+                .GetWhere(s => s.Code == model.Code && s.Id != model.Id,tracking: false)
+                .AnyAsync();
+
+            if (codeExists)
+                return new ErrorResult($"{model.Code} kodlu ixtisas artıq mövcuddur");
+
+            _mapper.Map(model, speciality);
+
+            if(model.CourseIds != null)
+            {
+                var updatedCourses = await _courseRead
+                    .GetWhere(x => model.CourseIds.Contains(x.Id), tracking: true)
+                    .ToListAsync();
+
+                speciality.Courses.Clear();
+            }
+
+            await _specialityWrite.SaveAsync();
+
+            return new SuccessResult("Ixtisas uğurla yeniləndi");
         }
     }
 }
