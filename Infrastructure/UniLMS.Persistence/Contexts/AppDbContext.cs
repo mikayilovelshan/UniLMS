@@ -25,7 +25,6 @@ namespace UniLMS.Persistence.Contexts
 
         public DbSet<Student> Students { get; set; }
         public DbSet<Teacher> Teachers { get; set; }
-
         public DbSet<ExamResult> ExamResults { get; set; }
         public DbSet<Attendance> Attendances { get; set; }
         public DbSet<StudentGrade> StudentGrades { get; set; }

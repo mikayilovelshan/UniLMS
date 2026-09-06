@@ -10,13 +10,15 @@ using UniLMS.Application.Repositories.CourseRepository;
 using UniLMS.Application.Repositories.SpecialityRepository;
 using UniLMS.Application.Utilities.Results;
 using UniLMS.Domain.Entities;
+using UniLMS.Persistence.Contexts;
 
 namespace UniLMS.Persistence.Services
 {
     public class SpecialityService(ISpecialityReadRepository _specialityRead,
         ISpecialityWriteRepository _specialityWrite,
         ICourseReadRepository _courseRead,
-        IMapper _mapper) : ISpecialityService
+        IMapper _mapper,
+        AppDbContext _context) : ISpecialityService
     {
         public async Task<IResult> CreateAsync(CreateSpecialityDTO model)
         {
@@ -32,6 +34,10 @@ namespace UniLMS.Persistence.Services
                 var courses = await _courseRead.GetWhere(x => model.CourseIds.Contains(x.Id), tracking: true)
                     .ToListAsync();
 
+                foreach(var course in courses)
+                {
+                    _context.Entry(course).State = EntityState.Unchanged;
+                }
                 speciality.Courses = courses;
             }
 
@@ -48,6 +54,7 @@ namespace UniLMS.Persistence.Services
                 .Include(s => s.Faculty)
                 .Include(s => s.Cafedra)
                 .Include(s => s.Courses)
+                    .ThenInclude(s => s.Cafedra)
                 .ToListAsync();
 
             var dtos = _mapper.Map<List<GetSpecialityDTO>>(specialites);
@@ -61,7 +68,7 @@ namespace UniLMS.Persistence.Services
                 .GetWhere(s => s.Id == id, tracking: false)
                 .Include(s => s.Faculty)
                 .Include(s => s.Cafedra)
-                .Include(s => s.Courses)
+                .Include(s => s.Courses) 
                 .FirstOrDefaultAsync();
 
             if(speciality == null)
