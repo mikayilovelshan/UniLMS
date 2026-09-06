@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/Core/">
+    <Project Path="Core/UniLMS.Application/UniLMS.Application.csproj" />
+    <Project Path="Core/UniLMS.Domain/UniLMS.Domain.csproj" />
+  </Folder>
+  <Folder Name="/Infrastructure/">
+    <Project Path="Infrastructure/UniLMS.Infrastructure/UniLMS.Infrastructure.csproj" />
+    <Project Path="Infrastructure/UniLMS.Persistence/UniLMS.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/Presentation/">
+    <Project Path="Presentation/UniLMS.WebApi/UniLMS.WebApi.csproj" />
+  </Folder>
+</Solution>

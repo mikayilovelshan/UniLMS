@@ -1,0 +1,6 @@
+@UniLMS.WebApi_HostAddress = http://localhost:5032
+
+GET {{UniLMS.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

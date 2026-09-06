@@ -1,0 +1,29 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using UniLMS.Application.DTOs.Cafedras;
+using UniLMS.Application.Utilities.Results;
+
+namespace UniLMS.Application.Interfaces.Services
+{
+    public interface ICafedraService 
+    {
+         Task<IDataResult<List<GetCafedraDTO>>> GetAllAsync();
+
+         Task<IDataResult<GetCafedraDTO>> GetByIdAsync(Guid id);
+
+         Task<IResult> CreateAsync(CreateCafedraDTO model);
+
+         Task<IResult> UpdateAsync(UpdateCafedraDTO model);
+
+         Task<IResult> SoftDeleteAsync(Guid id);
+
+         Task<IResult> HardDeleteAsync(Guid id);
+
+         Task<IResult> SoftDeleteRangeAsync(List<Guid> ids);
+
+         Task<IResult> HardDeleteRangeAsync(List<Guid> ids);
+
+         Task<IResult> RestoreAsync(Guid id);
+    }
+}
