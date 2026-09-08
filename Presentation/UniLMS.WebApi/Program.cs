@@ -1,9 +1,11 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using System.Reflection;
 using UniLMS.Application.ServiceRegistration;
+using UniLMS.Domain.Entities;
 using UniLMS.Persistence.Contexts;
 using UniLMS.Persistence.ServiceRegistration;
 
@@ -22,6 +24,17 @@ builder.Services.AddSpecialityPersistenceService();
 builder.Services.AddStudentPersistenceService();
 builder.Services.AddApplicationService();
 
+builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
+{
+    options.Password.RequiredLength = 6;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.User.RequireUniqueEmail = true;
+})
+.AddEntityFrameworkStores<AppDbContext>()
+.AddDefaultTokenProviders();
 
 var app = builder.Build();
 
@@ -35,6 +48,8 @@ if (app.Environment.IsDevelopment())
         options.WithOpenApiRoutePattern("/openapi/{documentName}.json");
     });
 }
+
+
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
