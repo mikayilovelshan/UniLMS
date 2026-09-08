@@ -17,8 +17,7 @@ namespace UniLMS.Persistence.Services
     public class SpecialityService(ISpecialityReadRepository _specialityRead,
         ISpecialityWriteRepository _specialityWrite,
         ICourseReadRepository _courseRead,
-        IMapper _mapper,
-        AppDbContext _context) : ISpecialityService
+        IMapper _mapper) : ISpecialityService
     {
         public async Task<IResult> CreateAsync(CreateSpecialityDTO model)
         {
@@ -34,10 +33,6 @@ namespace UniLMS.Persistence.Services
                 var courses = await _courseRead.GetWhere(x => model.CourseIds.Contains(x.Id), tracking: true)
                     .ToListAsync();
 
-                foreach(var course in courses)
-                {
-                    _context.Entry(course).State = EntityState.Unchanged;
-                }
                 speciality.Courses = courses;
             }
 
@@ -115,20 +110,20 @@ namespace UniLMS.Persistence.Services
         {
             bool isRemoved = await _specialityWrite.SoftDeleteAsync(id);
             if (!isRemoved)
-                return new ErrorResult("Uyğun kafedra tapılmadı");
+                return new ErrorResult("Uyğun ixtisas tapılmadı");
 
             await _specialityWrite.SaveAsync();
-            return new SuccessResult("Kafedra müvəqqəti silindi");
+            return new SuccessResult("ixtisas müvəqqəti silindi");
         }
 
         public async Task<IResult> SoftDeleteRangeAsync(List<Guid> ids)
         {
             var cafedras = await _specialityRead.GetWhere(d => ids.Contains(d.Id), tracking: true).ToListAsync();
             if (cafedras == null)
-                return new ErrorResult("Silmək üçün heç bir kafedra tapılmadı");
+                return new ErrorResult("Silmək üçün heç bir ixtisas tapılmadı");
             _specialityWrite.SoftDeleteRange(cafedras);
             await _specialityWrite.SaveAsync();
-            return new SuccessResult("Kafedralar passivləşdirildi");
+            return new SuccessResult("ixtisaslar passivləşdirildi");
         }
 
         public async Task<IResult> RestoreAsync(Guid id)
@@ -165,6 +160,11 @@ namespace UniLMS.Persistence.Services
                     .ToListAsync();
 
                 speciality.Courses.Clear();
+
+                foreach (var course in updatedCourses)
+                {
+                    speciality.Courses.Add(course);
+                }
             }
 
             await _specialityWrite.SaveAsync();
