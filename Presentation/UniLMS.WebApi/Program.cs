@@ -19,6 +19,7 @@ builder.Services.AddFacultyPersistenceService();
 builder.Services.AddCafedraPersistenceService();
 builder.Services.AddCoursePersistenceService();
 builder.Services.AddSpecialityPersistenceService();
+builder.Services.AddStudentPersistenceService();
 builder.Services.AddApplicationService();
 
 

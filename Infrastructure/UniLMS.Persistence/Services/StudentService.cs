@@ -75,29 +75,93 @@ namespace UniLMS.Persistence.Services
             return new SuccessDataResult<GetStudentDTO>(studentDTO);
         }
 
-        public Task<IResult> HardDeleteAsync(Guid id)
+        public async Task<IResult> HardDeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var student = await _studentRead.GetByIdAsync(id, tracking: false);
+
+            if (student == null)
+                return new ErrorResult("Tələbə tapılmadı.");
+
+            bool isRemoved = await _studentWrite.HardDeleteAsync(id);
+
+            if (!isRemoved)
+                return new ErrorResult("Tələbə silinərkən xəta baş verdi.");
+
+            await _studentWrite.SaveAsync();
+
+            var user = await _userManager.FindByIdAsync(student.AppUserId.ToString());
+            if (user != null)
+            {
+                await _userManager.DeleteAsync(user);
+            }
+
+            return new SuccessResult("Tələbə və istifadəçi hesabı bazadan tamamilə silindi.");
         }
 
-        public Task<IResult> HardDeleteRangeAsync(List<Guid> ids)
+        public async Task<IResult> HardDeleteRangeAsync(List<Guid> ids)
         {
-            throw new NotImplementedException();
+            var students = await _studentRead
+                .GetWhere(s => ids.Contains(s.Id), tracking: true)
+                .ToListAsync();
+
+            if(!students.Any())
+                return new ErrorResult("Silmək üçün heç bir tələbə tapılmadı");
+
+            _studentWrite.HardDeleteRange(students);
+
+            await _studentWrite.SaveAsync();
+
+            foreach (var student in students)
+            {
+                var user = await _userManager.FindByIdAsync(student.AppUserId.ToString());
+
+                if (user != null)
+                {
+                    await _userManager.DeleteAsync(user);
+                }
+            }
+
+            return new SuccessResult("Seçilmiş tələbələr və onların istifadəçi hesabları bazadan tamamilə silindi.");
+
         }
 
-        public Task<IResult> RestoreAsync(Guid id)
+        public async Task<IResult> SoftDeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var student = await _studentRead.GetByIdAsync(id, tracking: true);
+
+            if (student == null)
+                return new ErrorResult("Tələbə tapılmadı.");
+
+            student.IsDeleted = true;
+
+            await _studentWrite.SaveAsync();
+
+            return new SuccessResult("Tələbə passivləşdirildi.");
         }
 
-        public Task<IResult> SoftDeleteAsync(Guid id)
+        public async Task<IResult> SoftDeleteRangeAsync(List<Guid> ids)
         {
-            throw new NotImplementedException();
+            var students = await _studentRead
+                .GetWhere(s => ids.Contains(s.Id), tracking: true)
+                .ToListAsync();
+
+            if(!students.Any())
+                return new ErrorResult("Tələbə tapılmadı.");
+
+            _studentWrite.SoftDeleteRange(students);
+
+            await _studentWrite.SaveAsync();
+
+            return new SuccessResult("Tələbələr passivləşdirildi.");
         }
 
-        public Task<IResult> SoftDeleteRangeAsync(List<Guid> ids)
+        public async Task<IResult> RestoreAsync(Guid id)
         {
-            throw new NotImplementedException();
+            bool isRestored = await _studentWrite.RestoreAsync(id);
+            if (isRestored == false)
+                return new ErrorResult("Silinmiş məlumat tapılmadı və ya aktivdir");
+            await _studentWrite.SaveAsync();
+            return new SuccessResult("Məlumat bərpa edildi");
         }
 
         public async Task<IResult> UpdateAsync(UpdateStudentDTO model)

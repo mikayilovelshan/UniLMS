@@ -128,7 +128,7 @@ namespace UniLMS.Persistence.Services
                 return new ErrorResult("Silmək üçün heç bir kafedra tapılmadı");
             _specialityWrite.SoftDeleteRange(cafedras);
             await _specialityWrite.SaveAsync();
-            return new SuccessResult("Kafedralar tamamilə silindi");
+            return new SuccessResult("Kafedralar passivləşdirildi");
         }
 
         public async Task<IResult> RestoreAsync(Guid id)
