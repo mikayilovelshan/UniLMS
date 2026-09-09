@@ -10,6 +10,6 @@ namespace UniLMS.Application.DTOs.Groups
 
         public Guid SpecialityId { get; set; }
 
-        public List<Guid> StudentIds { get; set; } = new();
+        public List<Guid>? StudentIds { get; set; } 
     }
 }

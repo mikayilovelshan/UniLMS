@@ -15,7 +15,7 @@ namespace UniLMS.Domain.Entities
 
         public string? ProfilePhotoUrl { get; set; }
 
-        public string RefreshToken { get; set; }
+        public string? RefreshToken { get; set; }
 
         public DateTime? RefreshTokenEndDate { get; set; }
     }

@@ -16,8 +16,8 @@ namespace UniLMS.Domain.Entities
 
         public AppUser AppUser { get; set; }
 
-        public Guid GroupId { get; set; }
+        public Guid? GroupId { get; set; }
 
-        public Group Group { get; set; }  
+        public Group? Group { get; set; }  
     }
 }

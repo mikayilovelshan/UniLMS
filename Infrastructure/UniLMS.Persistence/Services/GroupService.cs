@@ -16,6 +16,7 @@ namespace UniLMS.Persistence.Services
     public class GroupService(IGroupReadRepository _groupRead,
         IGroupWriteRepository _groupWrite,
         IStudentReadRepository _studentRead,
+        IStudentWriteRepository _studentWrite,
         IMapper _mapper) : IGroupService
     {
         public async Task<IResult> CreateAsync(CreateGroupDTO model)
@@ -24,18 +25,26 @@ namespace UniLMS.Persistence.Services
 
             if (codeExists)
                 return new ErrorResult($"{model.Code} kodlu qrup mövcuddur");
-
-            var group = _mapper.Map<Group>(model);
-
-            if(model.StudentIds != null && model.StudentIds.Any())
+            var group = new Group
             {
-                var students = await _studentRead.GetWhere(s => model.StudentIds.Contains(s.Id), tracking: true).ToListAsync();
-                group.Students = students;
-            }
+                Code = model.Code,
+                SpecialityId = model.SpecialityId
+            };
 
             await _groupWrite.AddAsync(group);
             await _groupWrite.SaveAsync();
 
+               if(model.StudentIds != null && model.StudentIds.Any())
+            {
+                var students = await _studentRead.GetWhere(s => model.StudentIds.Contains(s.Id), tracking: true).ToListAsync();
+                foreach (var student in students)
+                {
+                    student.GroupId = group.Id;
+                    _studentWrite.Update(student);
+                }
+            }
+
+            await _groupWrite.SaveAsync();
             return new SuccessResult("Qrup uğurla əlavə edildi.");
         }
 
