@@ -111,13 +111,12 @@ namespace UniLMS.Persistence.Services
 
             await _studentWrite.SaveAsync();
 
-            foreach (var student in students)
-            {
-                var user = await _userManager.FindByIdAsync(student.AppUserId.ToString());
+            foreach (var student in students) 
+            { 
 
-                if (user != null)
+                if (student.AppUser != null)
                 {
-                    await _userManager.DeleteAsync(user);
+                    await _userManager.DeleteAsync(student.AppUser);
                 }
             }
 
