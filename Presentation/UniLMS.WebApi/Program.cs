@@ -24,6 +24,7 @@ builder.Services.AddSpecialityPersistenceService();
 builder.Services.AddStudentPersistenceService();
 builder.Services.AddTeacherPersistenceService();
 builder.Services.AddGroupPersistenceService();
+builder.Services.AddSemesterPersistenceService();
 builder.Services.AddApplicationService();
 
 builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
