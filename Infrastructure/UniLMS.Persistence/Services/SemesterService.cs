@@ -26,9 +26,12 @@ namespace UniLMS.Persistence.Services
             if(model.IsActive == true)
             {
                 var activeSemester = await _semesterRead.GetWhere(s => s.IsActive == true, tracking: true).FirstOrDefaultAsync();
-                
-                if(activeSemester != null)
+
+                if (activeSemester != null)
+                {
                     activeSemester.IsActive = false;
+                    _semesterWrite.Update(activeSemester);
+                }
             }
 
             var semester = _mapper.Map<Semester>(model);
