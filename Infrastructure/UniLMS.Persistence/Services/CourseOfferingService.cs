@@ -35,20 +35,25 @@ namespace UniLMS.Persistence.Services
             if (!semester.IsActive)
                 return new ErrorResult($"Seçilmiş semestr ('{semester.Name}') aktiv deyil.");
 
-            var group = _groupRead.GetWhere(d => d.Id == model.GroupId).AnyAsync();
-            var course = _courseRead.GetWhere(c => c.Id == model.CourseId).AnyAsync();
-            var teacher = _teacherRead.GetWhere(t => t.Id == model.TeacherId).AnyAsync();
-            var isDuplicate = _courseOfferingRead.GetWhere(co => co.SemesterId == model.SemesterId &&
-                                                           co.GroupId == model.GroupId && 
-                                                           co.CourseId == model.CourseId &&
-                                                           co.TeacherId == model.TeacherId).AnyAsync();
+           
+            var groupExists = await _groupRead.GetWhere(d => d.Id == model.GroupId).AnyAsync();
+            if (!groupExists)
+                return new ErrorResult("Daxil edilən qrup mövcud deyil.");
 
-            await Task.WhenAll(group, course, teacher, isDuplicate);
+            var courseExists = await _courseRead.GetWhere(c => c.Id == model.CourseId).AnyAsync();
+            if (!courseExists)
+                return new ErrorResult("Daxil edilən fənn mövcud deyil.");
 
-            if (!await group) return new ErrorResult("Daxil edilən qrup mövcud deyil.");
-            if (!await course) return new ErrorResult("Daxil edilən fənn mövcud deyil.");
-            if (!await teacher) return new ErrorResult("Daxil edilən müəllim mövcud deyil.");
-            if (await isDuplicate) return new ErrorResult("Bu semestrdə həmin qrup üçün göstərilən fənn artıq təyin edilib.");
+            var teacherExists = await _teacherRead.GetWhere(t => t.Id == model.TeacherId).AnyAsync();
+            if (!teacherExists)
+                return new ErrorResult("Daxil edilən müəllim mövcud deyil.");
+
+            var isDuplicate = await _courseOfferingRead.GetWhere(co => co.SemesterId == model.SemesterId &&
+                                                                       co.GroupId == model.GroupId &&
+                                                                       co.CourseId == model.CourseId &&
+                                                                       co.TeacherId == model.TeacherId).AnyAsync();
+            if (isDuplicate)
+                return new ErrorResult("Bu semestrdə həmin qrup üçün göstərilən fənn artıq təyin edilib.");
 
             var courseOffering = _mapper.Map<CourseOffering>(model);
             await _courseOfferingWrite.AddAsync(courseOffering);
@@ -56,6 +61,7 @@ namespace UniLMS.Persistence.Services
 
             return new SuccessResult("Dərs təyinatı uğurla yaradıldı.");
         }
+        
 
         public async Task<IDataResult<List<GetCourseOfferingDTO>>> GetAllAsync()
         {
