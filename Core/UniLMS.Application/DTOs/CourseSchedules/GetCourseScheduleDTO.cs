@@ -15,5 +15,13 @@ namespace UniLMS.Application.DTOs.CourseSchedules
         public TimeSpan StartTime { get; set; }
 
         public TimeSpan EndTime { get; set; }
+
+        public string CourseName { get; set; }
+
+        public string TeacherName { get; set; }
+
+        public string GroupName { get; set; }
+
+        public string RoomCode { get; set; }
     }
 }
