@@ -345,7 +345,7 @@ namespace UniLMS.Persistence.Contexts
             modelBuilder.Entity<CourseSchedule>(entity =>
             {
                 entity.HasOne(x => x.CourseOffering)
-                    .WithMany()
+                    .WithMany(x => x.CourseSchedules)
                     .HasForeignKey(x => x.CourseOfferingId)
                     .OnDelete(DeleteBehavior.Restrict);
 

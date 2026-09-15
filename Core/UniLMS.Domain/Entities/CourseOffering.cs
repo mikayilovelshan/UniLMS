@@ -21,5 +21,7 @@ namespace UniLMS.Domain.Entities
 
         public string RoomCode { get; set; }
 
+        public ICollection<CourseSchedule> CourseSchedules { get; set; }
+
     }
 }
