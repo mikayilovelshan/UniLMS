@@ -151,7 +151,7 @@ namespace UniLMS.Persistence.Services
             if (id == Guid.Empty)
                 return new ErrorResult("Keçərli bir dərs cədvəli ID-si daxil edin.");
 
-            var schedule = await _courseScheduleRead.GetByIdAsync(id.ToString(), tracking: true);
+            var schedule = await _courseScheduleRead.GetByIdAsync(id, tracking: true);
 
             if (schedule == null)
                 return new ErrorResult("Uyğun dərs cədvəli tapılmadı.");
