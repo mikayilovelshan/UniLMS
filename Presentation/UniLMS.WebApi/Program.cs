@@ -26,6 +26,7 @@ builder.Services.AddTeacherPersistenceService();
 builder.Services.AddGroupPersistenceService();
 builder.Services.AddSemesterPersistenceService();
 builder.Services.AddCourseOfferingPersistenceService();
+builder.Services.AddCourseSchedulePersistenceService();
 builder.Services.AddApplicationService();
 
 builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
