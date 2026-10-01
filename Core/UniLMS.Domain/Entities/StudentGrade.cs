@@ -28,7 +28,6 @@ namespace UniLMS.Domain.Entities
 
         public string LetterGrade {  get; set; }
 
-
         public bool IsPassed {  get; set; }
     }
 }
