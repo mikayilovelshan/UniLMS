@@ -12,7 +12,7 @@ namespace UniLMS.Application.DTOs.ExamResults
 
         public ExamType ExamType { get; set; }
 
-        public DateTime? EvaluationDate  { get; set; }
+        public DateTime EvaluationDate  { get; set; }
 
         public List<CreateStudentExamResultDTO> StudentScores { get; set; }
     }

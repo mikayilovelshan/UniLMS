@@ -11,7 +11,7 @@ namespace UniLMS.Application.DTOs.ExamResults
 
         public decimal Score { get; set; }
 
-        public DateTime? EvaluationDate { get; set; }
+        public DateTime EvaluationDate { get; set; }
         
     }
 }
