@@ -18,7 +18,6 @@ namespace UniLMS.Application.Validators.ExamResults
 
             RuleFor(x => x.EvaluationDate)
                 .LessThanOrEqualTo(DateTime.UtcNow).WithMessage("Gələcək tarix üçün imtahan qeyd edilə bilməz.")
-                .When(x => x.EvaluationDate.HasValue)
                 .WithMessage("Tarix mütləq qeyd olunmalıdır");
                 
             RuleFor(x => x.StudentScores)
