@@ -19,10 +19,10 @@ namespace UniLMS.Application.Mappings
                 .ForMember(dest => dest.AttendanceId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.StudentFullName, opt => opt.MapFrom(src => src.Student.AppUser.FirstName + " " + src.Student.AppUser.LastName));
 
-            CreateMap<CourseSchedule, GetAttendanceDTO>()
+            CreateMap<Attendance, GetAttendanceDTO>()
                 .ForMember(dest => dest.CourseScheduleId, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.CourseOffering.Course.Name))
-                .ForMember(dest => dest.GroupName, opt => opt.MapFrom(src => src.CourseOffering.Group.Code))
+                .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.CourseSchedule.CourseOffering.Course.Name))
+                .ForMember(dest => dest.GroupName, opt => opt.MapFrom(src => src.CourseSchedule.CourseOffering.Course.Name))
                 .ForMember(dest => dest.Students, opt => opt.Ignore());
         }
     }

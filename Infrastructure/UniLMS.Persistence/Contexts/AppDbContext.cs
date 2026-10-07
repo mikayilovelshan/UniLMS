@@ -404,7 +404,9 @@ namespace UniLMS.Persistence.Contexts
                 entity.HasIndex(x => new
                 {
                     x.StudentId,
-                    x.CourseScheduleId
+                    x.CourseScheduleId,
+                    x.Date
+
                 })
                 .IsUnique();
             });
