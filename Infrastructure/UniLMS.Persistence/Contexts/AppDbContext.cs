@@ -27,7 +27,6 @@ namespace UniLMS.Persistence.Contexts
         public DbSet<Teacher> Teachers { get; set; }
         public DbSet<ExamResult> ExamResults { get; set; }
         public DbSet<Attendance> Attendances { get; set; }
-        public DbSet<StudentGrade> StudentGrades { get; set; }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
@@ -407,56 +406,6 @@ namespace UniLMS.Persistence.Contexts
                     x.CourseScheduleId,
                     x.Date
 
-                })
-                .IsUnique();
-            });
-
-
-            modelBuilder.Entity<StudentGrade>(entity =>
-            {
-                entity.Property(x => x.DailyScore)
-                    .HasPrecision(5, 2);
-
-                entity.Property(x => x.AttendanceScore)
-                    .HasPrecision(5, 2);
-
-                entity.Property(x => x.IndependentWorkScore)
-                    .HasPrecision(5, 2);
-
-                entity.Property(x => x.ColloquiumScore)
-                    .HasPrecision(5, 2);
-
-                entity.Property(x => x.EntryScore)
-                    .HasPrecision(5, 2);
-
-                entity.Property(x => x.FinalExamScore)
-                    .HasPrecision(5, 2);
-
-                entity.Property(x => x.TotalScore)
-                    .HasPrecision(5, 2);
-
-                entity.Property(x => x.LetterGrade)
-                    .HasMaxLength(5)
-                    .IsRequired();
-
-
-                entity.HasOne(x => x.Student)
-                    .WithMany()
-                    .HasForeignKey(x => x.StudentId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-
-                entity.HasOne(x => x.CourseOffering)
-                    .WithMany()
-                    .HasForeignKey(x => x.CourseOfferingId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-
-            
-                entity.HasIndex(x => new
-                {
-                    x.StudentId,
-                    x.CourseOfferingId
                 })
                 .IsUnique();
             });
