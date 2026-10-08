@@ -15,6 +15,6 @@ namespace UniLMS.Application.DTOs.ExamResults
         public decimal TotalScore => EntryScore + FinalScore;
         public string LetterGrade { get; set; }
         public bool IsPassed { get; set; }
-        public List<ExamResultDetailDTO> DetailedScores { get; set; } = new();
+        public List<GetExamResultDTO> DetailedScores { get; set; } = new();
     }
 }
