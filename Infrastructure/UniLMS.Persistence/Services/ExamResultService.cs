@@ -165,5 +165,20 @@ namespace UniLMS.Persistence.Services
             return new SuccessResult("Dəyişiklik tətbiq edildi");
 
         }
+
+        public Task<IDataResult<StudentExamResultSummaryDTO>> GetStudentExamResultSummary(Guid studentId, Guid courseOfferinid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IDataResult<StudentCourseDetailedReportDTO>> GetStudentCourseDetailedReport(Guid studentId, Guid courseOfferingId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IDataResult<ExamResultDetailDTO>> GetExamResultDetail(Guid Id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
