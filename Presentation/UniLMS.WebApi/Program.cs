@@ -68,6 +68,8 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
+await app.SeedRolesAsync();
+
 if (app.Environment.IsDevelopment())
 {
     

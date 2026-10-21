@@ -26,6 +26,7 @@ namespace UniLMS.Persistence.Services
 
             if (!result)
                 return new ErrorDataResult<TokenResponseDTO>("Email və ya şifrə yanlışdır.");
+            
 
             var accessToken = _tokenService.CreateAccessToken(user);
 
@@ -91,6 +92,8 @@ namespace UniLMS.Persistence.Services
 
             if (!result.Succeeded)
                 return new ErrorResult("Hesab yaradıla bilmədi");
+
+            await _userManager.AddToRoleAsync(user, "Student");
 
             return new SuccessResult("Hesab uğurla yaradıldı");
         }
