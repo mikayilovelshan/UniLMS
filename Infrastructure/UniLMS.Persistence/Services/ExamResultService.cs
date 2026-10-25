@@ -1,9 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Text;
 using UniLMS.Application.DTOs.ExamResults;
 using UniLMS.Application.Interfaces.Services;
 using UniLMS.Application.Repositories.AttendanceRepository;

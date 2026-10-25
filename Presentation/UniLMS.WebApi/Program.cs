@@ -11,6 +11,7 @@ using UniLMS.Application.ServiceRegistration;
 using UniLMS.Domain.Entities;
 using UniLMS.Persistence.Contexts;
 using UniLMS.Persistence.ServiceRegistration;
+using UniLMS.WebApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,6 +68,8 @@ builder.Services.AddAuthentication(options =>
 });
 
 var app = builder.Build();
+
+app.UseGlobalExceptionMiddleware();
 
 await app.SeedRolesAsync();
 
