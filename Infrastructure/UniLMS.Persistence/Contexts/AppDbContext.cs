@@ -28,6 +28,8 @@ namespace UniLMS.Persistence.Contexts
         public DbSet<ExamResult> ExamResults { get; set; }
         public DbSet<Attendance> Attendances { get; set; }
 
+        public DbSet<CourseMaterial> CourseMaterials { get; set; }
+
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             var entries = ChangeTracker.Entries<BaseEntity>();

@@ -14,11 +14,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.SqlServer.Server" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\UniLMS.Application\UniLMS.Application.csproj" />
+    <ProjectReference Include="..\UniLMS.Infrastructure\UniLMS.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
